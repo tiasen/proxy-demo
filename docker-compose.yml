@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./ProxyDemo/Dockerfile
+    ports:
+      - 5100:80
+      - 5101:443
+  
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/logs:/etc/nginx/logs
+      - ./ssl:/usr/local/nginx/cert
+    ports:
+      - 80:80
+      - 443:443
+  
+  local-server:
+    image: python
+    volumes:
+      - ./local-server:/app
+    ports:
+      - 8000:8000
+      
+    command: ["python", "-m", "http.server", "--directory", "/app"]
